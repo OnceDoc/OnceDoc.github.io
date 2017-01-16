@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnceDB - full text search and relational query of Redis</title>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/jquery.bootstrap.css" rel="stylesheet">
+<link href="css/prettify.css" rel="stylesheet">
+<!--[if lt IE 9]>
+  <script src="js/html5shiv.js"></script>
+  <script src="js/respond.min.js"></script>
+<![endif]-->
+<style>
+.github-links{
+  background-color: #EEEEEE;
+  border-bottom: 1px solid #DDDDDD;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.github-links li{
+  display: inline-block;
+  list-style: none outside none;
+  margin: 16px 0 2px;
+}
+
+.carousel .item{
+  min-height: 540px;
+}
+
+.carousel .carousel-caption{
+  bottom: auto;
+}
+
+#myCarousel{
+  background-color: #B24926;
+}
+
+#home{
+  margin-top: 50px;
+}
+
+section{
+  margin-bottom: 100px;
+}
+
+section > .container > h1 {
+  background-color: #EEEEEE;
+  padding: 0.4em;
+  margin-top: 54px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <!-- 
+      <a class="navbar-brand" href="#">Bootstrap Jquery Plugin</a>
+      -->
+    </div>
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#home">Home</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a target="_blank" href="https://github.com/OnceDoc/OnceDB">OnceDB</a></li>
+        <li><a target="_blank" href="https://github.com/OnceDoc/OnceDB.win">OnceDB.win</a></li>
+        <li><a target="_blank" href="https://github.com/OnceDoc/node-oncedb-client">node-oncedb-client</a></li>
+        <li><a target="_blank" href="https://github.com/OnceDoc/onceio">OnceIO</a></li>
+        <li><a target="_blank" href="http://oncedoc.com">OnceDoc</a></li>
+      </ul>
+    </div><!-- /.nav-collapse -->
+  </div><!-- /.container -->
+</div><!-- /.navbar -->
+
+
+<section id="home">
+  <!-- Carousel
+  ================================================== -->
+  <div id="myCarousel" class="carousel slide">
+    <div class="carousel-inner">
+      <div class="item active">
+        <div class="container">
+          <div class="carousel-caption">
+            <br>
+            <h1 style="font-size: 52px;">OnceDB</h1>
+            <br><br><br>
+            <h2>支持全文搜索和关系查询的 NoSQL 内存数据库</h2>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container ad">
+  <div style="margin:54px auto 84px;width:728px">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- ourjs_width -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;width:728px;height:90px"
+       data-ad-client="ca-pub-1941367294435664"
+       data-ad-slot="9387478833"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+
+<h1>安装</h1>
+<p>Linux </p>
+<pre><code>git clone https://github.com/OnceDoc/OnceDB.git
+cd OnceDB
+make
+</code></pre>
+
+<p>Windows</p>
+<p>请到 <a href="https://github.com/OnceDoc/OnceDB.win/releases">Release</a> 下载二进制可执行文件</p>
+
+
+<h1>驱动</h1>
+<p>Node.JS </p>
+<pre><code>npm install oncedb-client
+</code></pre>
+
+
+<h2>String 搜索</h2>
+<h3>按条件搜索</h3>
+<pre><code>
+client.search('text*', '=', 'Kris', function(err, objs) {
+  console.log(objs)
+})
+
+> [ 'text1', 'Kris' ] 
+
+client.search('text*', '~', 'Kris', function(err, objs) {
+  console.log(objs)
+})
+
+> [ 'text1', 'Kris', 'text5', 'This is ok, Kris' ]
+</code></pre>
+
+<h2>Hash 搜索</h2>
+<h3>按条件搜索</h3>
+<pre><code>
+client.hsearch('userInfo:*', {'nVisit': {'>': 300}}, function(err, objs) {
+  console.log(objs)
+})
+//二者等价
+client.hsearch('userInfo:*', {'nVisit': {'$gt': 300}}, function(err, objs) {
+  console.log(objs)
+})
+
+ [ { _key: 'userInfo:1004', nVisit: '400' },
+   { _key: 'userInfo:1005', nVisit: '10000' },
+   { _key: 'userInfo:1006', nVisit: '10000' } ] }
+</code></pre>
+
+<h3>搜索并显示多个字段</h3>
+<pre><code>
+client.hsearch('userInfo:*', {
+    'name'     : '*'
+  , 'gender'   : '*'
+  , 'nVisit'   : {'>'  : '100'}
+}, function(err, objs) {
+    console.log(objs)  
+})
+
+> [ { _key: 'userInfo:1006',
+   name: 'Mar',
+   gender: 'male',
+   nVisit: '10000' ]
+</code></pre>
+
+<h2>Hash 选择</h2>
+<h3>查找指定key的指定field</h3>
+<pre><code>
+client.hselect(
+    ['name', 'email', 'isPublic', 'nVisit']
+  , ['userInfo:100', 'userInfo:103', 'userInfo:1005', 'userInfo:1006']
+  , function(err, objs) {
+    console.log(objs)
+})
+
+> [ { _key: 'userInfo:100',
+    name: 'shanghai',
+    email: null,
+    isPublic: null,
+    nVisit: null },
+{ _key: 'userInfo:103',
+    name: 'newghost',
+    email: null,
+    isPublic: null,
+    nVisit: null },
+{ _key: 'userInfo:1005',
+    name: 'Mars2',
+    email: null,
+    isPublic: '0',
+    nVisit: '10000' },
+{ _key: 'userInfo:1006',
+    name: 'Mar',
+    email: null,
+    isPublic: '1',
+    nVisit: '10000' } ]
+</code></pre>
+
+<h3>查找指定key的所有field</h3>
+<pre><code>
+client.hmgetall(['userInfo:100', 'userInfo:1003', 'userInfo:100'], function(err, objs) {
+  console.log(objs)
+})
+
+> [ { _key: 'userInfo:100',
+    id: '100',
+    name: 'shanghai',
+    gender: 'female',
+    poster: '龙' },
+  { _key: 'userInfo:1003',
+    name: 'Telyer',
+    id: '1003',
+    gender: 'male',
+    active: '0',
+    joinTime: '1484445746020',
+    poster: '王五',
+    isPublic: '0',
+    nVisit: '300' },
+  { _key: 'userInfo:100',
+    id: '100',
+    name: 'shanghai',
+    gender: 'female',
+    poster: '龙' } ]
+</code></pre>
+
+    </div>
+  </div>
+</div>
+
+
+
+<br><br><br>
+
+<div class="container">
+  <!-- FOOTER -->
+  <footer>
+    <p class="pull-right"><a href="#">Back to top</a></p>
+    <p>
+      &copy;
+      <a href="http://oncedoc.com">OnceDoc</a>
+    </p>
+  </footer>
+</div>
+
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/prettify.js"></script>
+<script src="js/jquery.bootstrap.js"></script>
+<script src="js/site.js"></script>
+
+</body>
+</html>
